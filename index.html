@@ -7,168 +7,234 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      line-height: 1.5;
-      background: #f8f9fa;
+      font-family: "Segoe UI", Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f6fa;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      background: #007bff;
+      color: white;
+      padding: 12px 20px;
+      font-size: 20px;
+      font-weight: bold;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header button {
+      background: white;
+      color: #007bff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    header button:hover {
+      background: #e6e6e6;
+    }
+    main {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
     }
     h1, h2 {
       color: #333;
     }
+    .section {
+      margin-top: 30px;
+    }
     .question {
-      margin-bottom: 15px;
-      padding: 10px;
+      margin-bottom: 18px;
+      padding: 14px;
       background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      position: relative;
+    }
+    .top10 {
+      background: #fffaf0;
+      border-left: 5px solid #ff9800;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
     }
     textarea {
       width: 100%;
-      min-height: 60px;
-      margin-top: 5px;
-      padding: 8px;
+      min-height: 70px;
+      padding: 10px;
       border-radius: 6px;
       border: 1px solid #ccc;
       resize: vertical;
+      font-size: 14px;
     }
-    button {
-      margin-top: 20px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 6px;
+    .speak-btn {
+      position: absolute;
+      right: 15px;
+      top: 15px;
       background: #007bff;
       color: white;
-      font-size: 16px;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
       cursor: pointer;
+      font-size: 14px;
+      line-height: 28px;
+      text-align: center;
     }
-    button:hover {
-      background: #0056b3;
+    .speak-btn.listening {
+      background: #e53935;
     }
   </style>
 </head>
 <body>
-  <h1>Premarital Questionnaire</h1>
-  <p>Fill in your answers below. When finished, click <b>Generate PDF</b> to save your responses.</p>
+  <header>
+    Premarital Questionnaire
+    <button onclick="generatePDF()">📄 Generate PDF</button>
+  </header>
 
-  <form id="questionnaire">
-    <h2>Top 10 Premarital Questions to Prioritize</h2>
-    <div class="question"><label>1. Do we both want children? If yes, how many and when?</label><textarea name="tq1"></textarea></div>
-    <div class="question"><label>2. What are our expectations about monogamy, flirting, pornography, and boundaries with exes?</label><textarea name="tq2"></textarea></div>
-    <div class="question"><label>3. How will we manage money — budgets, debt, savings, accounts, and financial decision authority?</label><textarea name="tq3"></textarea></div>
-    <div class="question"><label>4. How will we divide household chores, emotional labor, and caregiving?</label><textarea name="tq4"></textarea></div>
-    <div class="question"><label>5. How do we handle conflict? What are our triggers, and how do we want to repair after a fight?</label><textarea name="tq5"></textarea></div>
-    <div class="question"><label>6. What role will extended family / in-laws play? What boundaries are okay?</label><textarea name="tq6"></textarea></div>
-    <div class="question"><label>7. Do we have any mental-health diagnoses, addictions, or major health issues to know about? How will we handle crises?</label><textarea name="tq7"></textarea></div>
-    <div class="question"><label>8. Where will we live and how do we feel about relocation for jobs?</label><textarea name="tq8"></textarea></div>
-    <div class="question"><label>9. Do we want a prenuptial agreement or specific financial/legal arrangements?</label><textarea name="tq9"></textarea></div>
-    <div class="question"><label>10. What are our religious/spiritual expectations and how will we handle differences for parenting and holidays?</label><textarea name="tq10"></textarea></div>
+  <main>
+    <p>Fill in your answers. Use 🎙️ buttons to dictate answers. All progress is auto-saved.</p>
 
-    <h2>A — Money & Finances</h2>
-    <div class="question"><label>1. Who will manage day-to-day finances?</label><textarea name="q1"></textarea></div>
-    <div class="question"><label>2. What debt does each of us bring? How will we pay it down?</label><textarea name="q2"></textarea></div>
-    <div class="question"><label>3. Do we want joint bank accounts, separate accounts, or a mix?</label><textarea name="q3"></textarea></div>
-    <div class="question"><label>4. What are our short and long-term financial goals?</label><textarea name="q4"></textarea></div>
-    <div class="question"><label>5. How much can/should we each spend without consulting the other?</label><textarea name="q5"></textarea></div>
-    <div class="question"><label>6. What are our attitudes toward saving vs. spending and investing?</label><textarea name="q6"></textarea></div>
-    <div class="question"><label>7. Do we want a prenuptial agreement or other legal protections?</label><textarea name="q7"></textarea></div>
+    <!-- 🔥 Top 10 -->
+    <section class="section">
+      <h2>🔥 Top 10 Premarital Questions</h2>
+      <div class="question top10"><label>1. Do we both want children? If yes, how many and when?</label><textarea name="tq1"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question top10"><label>2. What are our expectations about monogamy, flirting, pornography, and boundaries with exes?</label><textarea name="tq2"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question top10"><label>3. How will we manage money — budgets, debt, savings, accounts, and financial decision authority?</label><textarea name="tq3"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question top10"><label>4. How will we divide household chores, emotional labor, and caregiving?</label><textarea name="tq4"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question top10"><label>5. How do we handle conflict? What are our triggers, and how do we want to repair after a fight?</label><textarea name="tq5"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question top10"><label>6. What role will extended family / in-laws play? What boundaries are okay?</label><textarea name="tq6"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question top10"><label>7. Do we have any mental-health diagnoses, addictions, or major health issues to know about? How will we handle crises?</label><textarea name="tq7"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question top10"><label>8. Where will we live and how do we feel about relocation for jobs?</label><textarea name="tq8"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question top10"><label>9. Do we want a prenuptial agreement or specific financial/legal arrangements?</label><textarea name="tq9"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question top10"><label>10. What are our religious/spiritual expectations and how will we handle differences for parenting and holidays?</label><textarea name="tq10"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+    </section>
 
-    <h2>B — Communication & Conflict Resolution</h2>
-    <div class="question"><label>8. How do we each express anger and how do we calm down?</label><textarea name="q8"></textarea></div>
-    <div class="question"><label>9. What topics trigger big reactions for you?</label><textarea name="q9"></textarea></div>
-    <div class="question"><label>10. How will we repair after fights?</label><textarea name="q10"></textarea></div>
-    <div class="question"><label>11. Are we comfortable seeking couples therapy when needed?</label><textarea name="q11"></textarea></div>
-    <div class="question"><label>12. How often should we check in about relationship health?</label><textarea name="q12"></textarea></div>
-    <div class="question"><label>13. How do we want to handle major disagreements we can’t resolve?</label><textarea name="q13"></textarea></div>
+    <!-- Remaining 40 grouped -->
+    <section class="section">
+      <h2>A — Money & Finances</h2>
+      <div class="question"><label>11. Who will manage day-to-day finances?</label><textarea name="q1"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>12. What debt does each of us bring? How will we pay it down?</label><textarea name="q2"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>13. Do we want joint bank accounts, separate accounts, or a mix?</label><textarea name="q3"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>14. What are our short and long-term financial goals?</label><textarea name="q4"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>15. How much can/should we each spend without consulting the other?</label><textarea name="q5"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>16. What are our attitudes toward saving vs. spending and investing?</label><textarea name="q6"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>17. Do we want a prenuptial agreement or other legal protections?</label><textarea name="q7"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
 
-    <h2>C — Family, In-laws & Boundaries</h2>
-    <div class="question"><label>14. How much time do we expect to spend with families during holidays?</label><textarea name="q14"></textarea></div>
-    <div class="question"><label>15. What decisions or influences from parents are unacceptable?</label><textarea name="q15"></textarea></div>
-    <div class="question"><label>16. How will we handle family pressure about children, careers, or living location?</label><textarea name="q16"></textarea></div>
-    <div class="question"><label>17. Are there cultural/traditional expectations from family that affect us?</label><textarea name="q17"></textarea></div>
-    <div class="question"><label>18. How do we handle caregiving for aging parents or family emergencies?</label><textarea name="q18"></textarea></div>
+      <h2>B — Communication & Conflict Resolution</h2>
+      <div class="question"><label>18. How do we each express anger and how do we calm down?</label><textarea name="q8"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>19. What topics trigger big reactions for you?</label><textarea name="q9"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>20. How will we repair after fights?</label><textarea name="q10"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>21. Are we comfortable seeking couples therapy when needed?</label><textarea name="q11"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>22. How often should we check in about relationship health?</label><textarea name="q12"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>23. How do we want to handle major disagreements we can’t resolve?</label><textarea name="q13"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
 
-    <h2>D — Children & Parenting</h2>
-    <div class="question"><label>19. Do we both want children? If yes, how many and when?</label><textarea name="q19"></textarea></div>
-    <div class="question"><label>20. What parenting style do we prefer?</label><textarea name="q20"></textarea></div>
-    <div class="question"><label>21. How will we handle discipline, schooling, and religious education?</label><textarea name="q21"></textarea></div>
-    <div class="question"><label>22. How will we split parental leave and childcare?</label><textarea name="q22"></textarea></div>
-    <div class="question"><label>23. What are our views on fertility treatments or adoption?</label><textarea name="q23"></textarea></div>
-    <div class="question"><label>24. How will we handle disagreements about children in front of them?</label><textarea name="q24"></textarea></div>
+      <h2>C — Family, In-laws & Boundaries</h2>
+      <div class="question"><label>24. How much time do we expect to spend with families during holidays?</label><textarea name="q14"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>25. What decisions or influences from parents are unacceptable?</label><textarea name="q15"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>26. How will we handle family pressure about children, careers, or living location?</label><textarea name="q16"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>27. Are there cultural/traditional expectations from family that affect us?</label><textarea name="q17"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>28. How do we handle caregiving for aging parents or family emergencies?</label><textarea name="q18"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
 
-    <h2>E — Household & Daily Routines</h2>
-    <div class="question"><label>25. How will we divide chores and home maintenance?</label><textarea name="q25"></textarea></div>
-    <div class="question"><label>26. Who cooks, shops, and handles repairs?</label><textarea name="q26"></textarea></div>
-    <div class="question"><label>27. How do we handle differing sleep schedules or personal space needs?</label><textarea name="q27"></textarea></div>
-    <div class="question"><label>28. How will we manage shared property (cars, tools, furniture)?</label><textarea name="q28"></textarea></div>
-    <div class="question"><label>29. What role do pets play — who cares for them and pays for them?</label><textarea name="q29"></textarea></div>
+      <h2>D — Children & Parenting</h2>
+      <div class="question"><label>29. What parenting style do we prefer?</label><textarea name="q19"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>30. How will we handle discipline, schooling, and religious education?</label><textarea name="q20"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>31. How will we split parental leave and childcare?</label><textarea name="q21"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>32. What are our views on fertility treatments or adoption?</label><textarea name="q22"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>33. How will we handle disagreements about children in front of them?</label><textarea name="q23"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
 
-    <h2>F — Sex & Intimacy</h2>
-    <div class="question"><label>30. What are our expectations about sex frequency and communication?</label><textarea name="q30"></textarea></div>
-    <div class="question"><label>31. How do we feel about physical affection?</label><textarea name="q31"></textarea></div>
-    <div class="question"><label>32. What are our boundaries on porn, sexting, and sexual exclusivity?</label><textarea name="q32"></textarea></div>
-    <div class="question"><label>33. Are there sexual health issues or histories we need to discuss?</label><textarea name="q33"></textarea></div>
-    <div class="question"><label>34. How will we handle mismatched libidos or changes?</label><textarea name="q34"></textarea></div>
+      <h2>E — Household & Daily Routines</h2>
+      <div class="question"><label>34. How will we divide chores and home maintenance?</label><textarea name="q24"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>35. Who cooks, shops, and handles repairs?</label><textarea name="q25"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>36. How do we handle differing sleep schedules or personal space needs?</label><textarea name="q26"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>37. How will we manage shared property (cars, tools, furniture)?</label><textarea name="q27"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>38. What role do pets play — who cares for them and pays for them?</label><textarea name="q28"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
 
-    <h2>G — Values, Religion & Lifestyle</h2>
-    <div class="question"><label>35. What does marriage mean to each of us?</label><textarea name="q35"></textarea></div>
-    <div class="question"><label>36. How important are religion and spiritual practices?</label><textarea name="q36"></textarea></div>
-    <div class="question"><label>37. Where do we want to live long-term?</label><textarea name="q37"></textarea></div>
-    <div class="question"><label>38. What are our expectations around children’s religious or cultural upbringing?</label><textarea name="q38"></textarea></div>
+      <h2>F — Sex & Intimacy</h2>
+      <div class="question"><label>39. What are our expectations about sex frequency and communication?</label><textarea name="q29"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>40. How do we feel about physical affection?</label><textarea name="q30"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>41. What are our boundaries on porn, sexting, and sexual exclusivity?</label><textarea name="q31"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>42. Are there sexual health issues or histories we need to discuss?</label><textarea name="q32"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>43. How will we handle mismatched libidos or changes?</label><textarea name="q33"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
 
-    <h2>H — Health, Mental Health & Addiction</h2>
-    <div class="question"><label>39. Do we have mental-health diagnoses or treatments to share?</label><textarea name="q39"></textarea></div>
-    <div class="question"><label>40. Are there past or present substance-use issues?</label><textarea name="q40"></textarea></div>
-    <div class="question"><label>41. How will we handle major health crises and caregiving?</label><textarea name="q41"></textarea></div>
+      <h2>G — Values, Religion & Lifestyle</h2>
+      <div class="question"><label>44. What does marriage mean to each of us?</label><textarea name="q34"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>45. How important are religion and spiritual practices?</label><textarea name="q35"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>46. Where do we want to live long-term?</label><textarea name="q36"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>47. What are our expectations around children’s religious or cultural upbringing?</label><textarea name="q37"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
 
-    <h2>I — Work, Career & Future Plans</h2>
-    <div class="question"><label>42. How will job changes, long hours, or travel be handled?</label><textarea name="q42"></textarea></div>
-    <div class="question"><label>43. Are we open to relocation for either partner’s job?</label><textarea name="q43"></textarea></div>
-    <div class="question"><label>44. What are expectations about education, side businesses, or unpaid work?</label><textarea name="q44"></textarea></div>
-
-    <h2>J — Legal, Practical & Financial Planning</h2>
-    <div class="question"><label>45. Who will be on insurance policies and as beneficiaries?</label><textarea name="q45"></textarea></div>
-    <div class="question"><label>46. How will we handle taxes and major purchases?</label><textarea name="q46"></textarea></div>
-    <div class="question"><label>47. Do we have estate plans, wills, or guardianship arrangements?</label><textarea name="q47"></textarea></div>
-
-    <h2>K — Social Life & Friendships</h2>
-    <div class="question"><label>48. How much time do we expect to spend with friends vs. together?</label><textarea name="q48"></textarea></div>
-    <div class="question"><label>49. Are there friendships or social activities that are off-limits?</label><textarea name="q49"></textarea></div>
-
-    <h2>L — Technology & Privacy</h2>
-    <div class="question"><label>50. What boundaries do we want around phones, social media, passwords, and privacy?</label><textarea name="q50"></textarea></div>
-
-    <button type="button" onclick="generatePDF()">Generate PDF</button>
-  </form>
+      <h2>H — Health, Mental Health & Addiction</h2>
+      <div class="question"><label>48. Do we have mental-health diagnoses or treatments to share?</label><textarea name="q38"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>49. Are there past or present substance-use issues?</label><textarea name="q39"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+      <div class="question"><label>50. How will we handle major health crises and caregiving?</label><textarea name="q40"></textarea><button type="button" class="speak-btn" onclick="startDictation(this)">🎙️</button></div>
+    </section>
+  </main>
 
   <script>
-    async function generatePDF() {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      const form = document.getElementById('questionnaire');
-      const elements = form.querySelectorAll('label, textarea');
+    const { jsPDF } = window.jspdf;
 
+    // Auto-save & restore answers
+    document.querySelectorAll("textarea").forEach(textarea => {
+      const saved = localStorage.getItem(textarea.name);
+      if (saved) textarea.value = saved;
+      textarea.addEventListener("input", () => {
+        localStorage.setItem(textarea.name, textarea.value);
+      });
+    });
+
+    // Speech-to-text dictation
+    function startDictation(btn) {
+      const textarea = btn.previousElementSibling;
+      if (!('webkitSpeechRecognition' in window)) {
+        alert("Speech recognition not supported in this browser.");
+        return;
+      }
+      const recognition = new webkitSpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+      btn.classList.add("listening");
+
+      recognition.onresult = e => {
+        textarea.value += (textarea.value ? " " : "") + e.results[0][0].transcript;
+        localStorage.setItem(textarea.name, textarea.value);
+      };
+      recognition.onerror = e => console.error(e);
+      recognition.onend = () => btn.classList.remove("listening");
+      recognition.start();
+    }
+
+    // Generate PDF
+    function generatePDF() {
+      const doc = new jsPDF();
       let y = 10;
       doc.setFontSize(14);
       doc.text("Premarital Questionnaire Responses", 10, y);
       y += 10;
 
-      doc.setFontSize(11);
-      elements.forEach(el => {
-        if (el.tagName.toLowerCase() === 'label') {
+      document.querySelectorAll("label, textarea").forEach(el => {
+        if (el.tagName.toLowerCase() === "label") {
           if (y > 280) { doc.addPage(); y = 10; }
-          doc.setFont(undefined, 'bold');
+          doc.setFont(undefined, "bold");
           doc.text(el.innerText, 10, y);
           y += 6;
-        } else if (el.tagName.toLowerCase() === 'textarea') {
+        } else if (el.tagName.toLowerCase() === "textarea") {
           if (y > 280) { doc.addPage(); y = 10; }
-          doc.setFont(undefined, 'normal');
-          let text = el.value || "(No response)";
-          let splitText = doc.splitTextToSize(text, 180);
+          doc.setFont(undefined, "normal");
+          const text = el.value || "(No response)";
+          const splitText = doc.splitTextToSize(text, 180);
           doc.text(splitText, 10, y);
           y += splitText.length * 6 + 4;
         }
       });
-
       doc.save("Premarital_Questionnaire.pdf");
     }
   </script>
